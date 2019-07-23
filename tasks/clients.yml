@@ -1,0 +1,58 @@
+########################################
+#   Generate client keys and OVPN file
+########################################
+
+- name: Generate client keys
+  command: "{{easyrsa_base_dir}}/easyrsa build-client-full {{item}} nopass"
+  with_items: "{{clients}}"
+
+- name: Create folder for OVPN files
+  file:
+    path: "{{openvpn_ovpn_files_dir}}"
+    state: directory
+
+- name: Get CA certificate
+  slurp:
+    src: "{{easyrsa_pki_dir}}/ca.crt"
+  register: ca_cert
+
+- name: Get tls-auth key
+  slurp:
+    src: "{{openvpn_key_dir}}/ta.key"
+  register: tls_auth
+
+- name: Create client certs list
+  slurp:
+    src: "{{openvpn_cert_dir}}/{{item}}.crt"
+  with_items: "{{clients}}"
+  register: client_certs
+
+- name: Create client key list
+  slurp:
+    src: "{{openvpn_key_dir}}/{{item}}.key"
+  with_items: "{{clients}}"
+  register: client_keys
+
+- name: Generate OVPN client files
+  template:
+    src: client.ovpn.j2
+    dest: "{{openvpn_ovpn_files_dir}}/{{item.0.item}}.ovpn"
+    mode: 0640
+  with_together:
+    - "{{client_certs.results}}"
+    - "{{client_keys.results}}"
+
+- name: Revoke client certificate
+  command: "{{easyrsa_base_dir}}/easyrsa revoke {{item}}"
+  with_items: "{{revoked_clients}}"
+
+- name: Generate crl.pem file
+  command: "{{easyrsa_base_dir}}/easyrsa gen-crl"
+  notify: "Restart OpenVPN service"
+
+# - name: Generate ccd clients configs
+#   template:
+#     src: ccd-config.j2
+#     dest: "{{openvpn_ccd_dir}}/{{item}}"
+#     mode: 0640
+#   with_items: 

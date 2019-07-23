@@ -1,0 +1,34 @@
+# TODO openvpn.service have to be restarted after config changes
+
+- name: Create EasyRSA folder
+  file:
+    path: "{{easyrsa_base_dir}}"
+    state: directory
+
+- name: Unarchive EasyRSA
+  unarchive:
+    src: EasyRSA-v3.0.6.tar.xz
+    dest: "{{easyrsa_base_dir}}"
+
+- name: Config EasyRSA
+  template:
+    src: templates/vars.j2
+    dest: "{{easyrsa_base_dir}}/vars"
+    mode: 0640
+
+- name: Init PKI
+  command: "{{easyrsa_base_dir}}/easyrsa init-pki"
+
+- name: Generate CA
+  # generated in easyrsa_pki_dir (how to change ??)
+  command: "{{easyrsa_base_dir}}/easyrsa build-ca nopass"
+
+- name: Generate server key
+  command: "{{easyrsa_base_dir}}/easyrsa build-server-full {{openvpn_servername}} nopass"
+
+- name: Generate TLS-AUTH key
+  command: openvpn --genkey --secret "{{openvpn_key_dir}}/ta.key"
+
+- name: Generate Diffie-Hellman key
+  # generated in easyrsa_pki_dir (how to change ??)
+  command: "{{easyrsa_base_dir}}/easyrsa gen-dh"

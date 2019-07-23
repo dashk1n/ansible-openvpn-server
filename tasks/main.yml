@@ -1,0 +1,11 @@
+---
+# tasks file for openvpn-server
+- name: install openvpn server
+  include_tasks: openvpn-server.yml
+
+- name: install and init easy-rsa
+  include_tasks: easyrsa.yml
+#   tags: ['never', 'install']
+
+- name: Generate certificates and OVPN config files
+  include_tasks: clients.yml

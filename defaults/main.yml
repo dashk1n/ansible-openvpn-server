@@ -1,0 +1,54 @@
+---
+openvpn_base_dir: /etc/openvpn
+easy_rsa_folder: /etc/openvpn/easy-rsa
+openvpn_ovpn_files_dir: "{{openvpn_base_dir}}/ovpn"
+
+#######################################
+# easyrsa options
+#######################################
+easyrsa_base_dir: /etc/openvpn/easyrsa
+easyrsa_pki_dir: /etc/openvpn/pki
+openvpn_key_dir: "{{easyrsa_pki_dir}}/private"
+openvpn_cert_dir: "{{easyrsa_pki_dir}}/issued"
+
+easyrsa_key_country: US
+easyrsa_key_province: California
+easyrsa_key_city: SanFrancisco
+easyrsa_key_org: Copyleft Certificate Co
+easyrsa_key_email: me@myhost.mydomain
+easyrsa_key_ou: My Organizational Unit
+
+easyrsa_cn: openvpn-server2
+
+openvpn_key_size: 2048
+
+openvpn_ca_expire: 3655
+openvpn_cert_expire: 1085
+
+openvpn_servername: openvpn-server2
+
+#######################################
+# openvpn server config
+#######################################
+
+openvpn_server_host: 35.246.248.15
+openvpn_port: 11941
+# TODO add tcp proto
+openvpn_proto: udp
+# TODO add dev tap
+openvpn_dev: tun
+openvpn_group: nogroup
+openvpn_user: nobody
+openvpn_push_routes: [10.128.0.10 255.255.255.255, 10.132.0.3 255.255.255.255]
+openvpn_redirect_gateway: true
+openvpn_ccd_dir: "{{openvpn_base_dir}}/ccd"
+# openvpn_client_to_client: ""
+openvpn_log: /var/log/openvpn/openvpn.log
+openvpn_log_level: 4 # range of 0 .. 9
+
+# openvpn clients lists
+clients: [client40, client41, client42]
+revoked_clients: [client42]
+clients_ccd: 
+  - name: client42
+    ifconfig_push: [10.8.1.1 10.8.1.2]

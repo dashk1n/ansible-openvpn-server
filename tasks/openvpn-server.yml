@@ -1,0 +1,36 @@
+- block:
+    - name: install openvpn
+      package:
+        name: openvpn
+        state: present
+
+    # only for ubuntu18.04, service openvpn didn't start without it
+    - name: fix openvpn defautl config
+      lineinfile:
+        path: /etc/default/openvpn
+        line: AUTOSTART="all"
+        create: yes
+
+    - name: just force systemd to reread configs (2.4 and above)
+      systemd: daemon_reload=yes
+
+    - name: Enable IP forwarding on server
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: 1
+        state: present
+        reload: yes
+
+    - name: Create ccd folder
+      file:
+        path: "{{openvpn_ccd_dir}}"
+        state: directory
+
+    - name: configure openvpn
+      template:
+        src: templates/server.conf.j2
+        dest: "{{openvpn_base_dir}}/server.conf"
+      notify:
+        - Restart OpenVPN service
+
+#   tags: ['never', 'install']
