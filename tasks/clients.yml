@@ -4,6 +4,8 @@
 
 - name: Generate client keys
   command: "{{easyrsa_base_dir}}/easyrsa build-client-full {{item.name}} nopass"
+  args:
+    creates: "{{openvpn_key_dir}}/{{item.name}}.key"
   with_items: "{{clients}}"
 
 - name: Create folder for OVPN files
