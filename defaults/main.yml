@@ -39,16 +39,24 @@ openvpn_proto: udp
 openvpn_dev: tun
 openvpn_group: nogroup
 openvpn_user: nobody
+openvpn_subnet: "10.8.0.0 255.255.255.0"
+openvpn_ifconfig_pool: "10.8.0.2 10.8.0.200"
 openvpn_push_routes: [10.128.0.10 255.255.255.255, 10.132.0.3 255.255.255.255]
 openvpn_redirect_gateway: true
+openvpn_client_to_client: false
 openvpn_ccd_dir: "{{openvpn_base_dir}}/ccd"
-# openvpn_client_to_client: ""
+openvpn_max_clients: 100
+openvpn_status: /var/log/openvpn/openvpn-status.log
 openvpn_log: /var/log/openvpn/openvpn.log
 openvpn_log_level: 4 # range of 0 .. 9
 
-# openvpn clients lists
-clients: [client40, client41, client42]
+
+#######################################
+# Clients list
+#######################################
+clients:
+  - {name: client40}
+  - {name: client41, ifconfig_push: 10.8.0.201 255.255.255.0}
+  - {name: client42}
+
 revoked_clients: [client42]
-clients_ccd: 
-  - name: client42
-    ifconfig_push: [10.8.1.1 10.8.1.2]

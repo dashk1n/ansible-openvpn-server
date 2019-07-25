@@ -6,10 +6,10 @@ cert "{{openvpn_cert_dir}}/{{openvpn_servername}}.crt"
 key "{{openvpn_key_dir}}/{{openvpn_servername}}.key"
 dh "{{easyrsa_pki_dir}}/dh.pem"
 topology subnet
-server 10.8.0.0 255.255.255.0
+server {{openvpn_subnet}} nopool
+ifconfig-pool {{openvpn_ifconfig_pool}}
 
-# TODO must be a variable
-ifconfig-pool-persist /var/log/openvpn/ipp.txt
+ifconfig-pool-persist {{openvpn_base_dir}}/ipp.txt
 
 {% for item in openvpn_push_routes %}
 push "route {{item}}"
@@ -19,10 +19,12 @@ push "route {{item}}"
 push "redirect-gateway def1 bypass-dhcp"
 {% endif %}
 
-# TODO must be a var
-;client-to-client
+{% if openvpn_client_to_client|bool %}
+client-to-client
+{% endif %}
+
 keepalive 10 120
-tls-auth {{openvpn_key_dir}}/ta.key 0 # This file is secret
+tls-auth {{openvpn_key_dir}}/ta.key 0
 cipher AES-256-CBC
 auth SHA256
 comp-lzo
@@ -31,8 +33,7 @@ client-config-dir {{openvpn_ccd_dir}}
 
 crl-verify {{easyrsa_pki_dir}}/crl.pem
 
-# TODO must be a var
-;max-clients 100
+max-clients {{openvpn_max_clients}}
 
 user {{openvpn_user}}
 group {{openvpn_group}}
@@ -40,7 +41,7 @@ group {{openvpn_group}}
 persist-key
 persist-tun
 
-status /var/log/openvpn/openvpn-status.log
+status {{openvpn_status}}
 
 log-append  {{openvpn_log}}
 verb {{openvpn_log_level}}

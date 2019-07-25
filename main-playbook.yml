@@ -1,5 +1,7 @@
 ---
   - hosts: openvpn-server2
     become: yes
-    roles: 
-      - openvpn-server
+    roles:
+      - { role: openvpn-server }
+      # - {role: openvpn_server}
+        # clients: [client46]

@@ -3,7 +3,7 @@
 ########################################
 
 - name: Generate client keys
-  command: "{{easyrsa_base_dir}}/easyrsa build-client-full {{item}} nopass"
+  command: "{{easyrsa_base_dir}}/easyrsa build-client-full {{item.name}} nopass"
   with_items: "{{clients}}"
 
 - name: Create folder for OVPN files
@@ -23,20 +23,20 @@
 
 - name: Create client certs list
   slurp:
-    src: "{{openvpn_cert_dir}}/{{item}}.crt"
+    src: "{{openvpn_cert_dir}}/{{item.name}}.crt"
   with_items: "{{clients}}"
   register: client_certs
 
 - name: Create client key list
   slurp:
-    src: "{{openvpn_key_dir}}/{{item}}.key"
+    src: "{{openvpn_key_dir}}/{{item.name}}.key"
   with_items: "{{clients}}"
   register: client_keys
 
 - name: Generate OVPN client files
   template:
     src: client.ovpn.j2
-    dest: "{{openvpn_ovpn_files_dir}}/{{item.0.item}}.ovpn"
+    dest: "{{openvpn_ovpn_files_dir}}/{{item.0.item.name}}.ovpn"
     mode: 0640
   with_together:
     - "{{client_certs.results}}"
@@ -50,9 +50,10 @@
   command: "{{easyrsa_base_dir}}/easyrsa gen-crl"
   notify: "Restart OpenVPN service"
 
-# - name: Generate ccd clients configs
-#   template:
-#     src: ccd-config.j2
-#     dest: "{{openvpn_ccd_dir}}/{{item}}"
-#     mode: 0640
-#   with_items: 
+- name: Generate ccd clients configs
+  template:
+    src: ccd-config.j2
+    dest: "{{openvpn_ccd_dir}}/{{item.name}}"
+    mode: 0644
+  when: item.ifconfig_push is defined
+  with_items: "{{clients}}"
