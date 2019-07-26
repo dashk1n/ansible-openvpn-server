@@ -54,9 +54,5 @@ openvpn_log_level: 4 # range of 0 .. 9
 #######################################
 # Clients list
 #######################################
-clients:
-  - {name: client40}
-  - {name: client41, ifconfig_push: 10.8.0.201 255.255.255.0}
-  - {name: client42}
-
-revoked_clients: [client42]
+clients: []
+revoked_clients: []

@@ -1,7 +1,11 @@
 ---
-  - hosts: openvpn-server2
+  - hosts: openvpn-server3
     become: yes
     roles:
-      - { role: openvpn-server }
-      # - {role: openvpn_server}
-        # clients: [client46]
+      - { role: openvpn-server,
+          openvpn_port: 11942,
+          clients: [{name: client40},
+                    {name: client41, ifconfig_push: 10.8.0.201 255.255.255.0},
+                    {name: client42},
+                    {name: client43}],
+          revoked_clients: [client42, client43] }
