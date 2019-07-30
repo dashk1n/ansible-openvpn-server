@@ -59,3 +59,17 @@
     mode: 0644
   when: item.ifconfig_push is defined
   with_items: "{{clients}}"
+
+- name: Send OVPN files to clients if needed
+  mail:
+    host: "{{mail_server_host}}"
+    port: "{{mail_server_port}}"
+    username: "{{mail_server_username}}"
+    password: "{{mail_server_password}}"
+    from: "{{mail_server_username}}"
+    subject: "{{mail_server_subject}}"
+    to: "{{item.email}}"
+    attach: ["{{openvpn_ovpn_files_dir}}/{{item.name}}.ovpn"]
+  with_items: "{{clients}}"
+  tags: ['never', 'send_config']
+  when: item.email is defined
