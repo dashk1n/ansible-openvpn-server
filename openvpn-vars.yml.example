@@ -1,0 +1,15 @@
+openvpn_port: 11942
+
+clients: [{name: client40, email: dmitriy.p@zazmic.com},
+          {name: client41, ifconfig_push: 10.8.0.201 255.255.255.0},
+          {name: client42},
+          {name: client43}]
+revoked_clients: [client42, client43]
+
+send_email: true
+
+mail_server_host: smtp.example.com
+mail_server_port: 465
+mail_server_username: test@domain.com
+mail_server_password:
+mail_server_subject: Config file for OpenVPN connection

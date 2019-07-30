@@ -32,5 +32,3 @@
         dest: "{{openvpn_base_dir}}/server.conf"
       notify:
         - Restart OpenVPN service
-
-#   tags: ['never', 'install']

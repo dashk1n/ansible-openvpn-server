@@ -8,7 +8,7 @@
     creates: "{{openvpn_key_dir}}/{{item.name}}.key"
   with_items: "{{clients}}"
 
-# run two times
+# task runs two times
 - name: Remove comments in crt files
   replace:
     path: "{{openvpn_cert_dir}}/{{item.name}}.crt"
@@ -86,5 +86,4 @@
     to: "{{item.email}}"
     attach: ["{{openvpn_ovpn_files_dir}}/{{item.name}}.ovpn"]
   with_items: "{{clients}}"
-  tags: ['never', 'send_config']
-  when: item.email is defined
+  when: (send_email|bool == true) and (item.email is defined)
