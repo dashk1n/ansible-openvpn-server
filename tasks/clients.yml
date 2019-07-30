@@ -8,6 +8,21 @@
     creates: "{{openvpn_key_dir}}/{{item.name}}.key"
   with_items: "{{clients}}"
 
+# run two times
+- name: Remove comments in crt files
+  replace:
+    path: "{{openvpn_cert_dir}}/{{item.name}}.crt"
+    regexp: '(^.*\s*$)'
+    before: "-----BEGIN CERTIFICATE----"
+  with_items: "{{clients}}"
+
+- name: Remove comments in crt files
+  replace:
+    path: "{{openvpn_cert_dir}}/{{item.name}}.crt"
+    regexp: '(^.*\s*$)'
+    before: "-----BEGIN CERTIFICATE----"
+  with_items: "{{clients}}"
+
 - name: Create folder for OVPN files
   file:
     path: "{{openvpn_ovpn_files_dir}}"
