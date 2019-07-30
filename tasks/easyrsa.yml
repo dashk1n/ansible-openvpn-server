@@ -29,13 +29,13 @@
 - name: Generate TLS-AUTH key
   command: openvpn --genkey --secret "{{openvpn_key_dir}}/ta.key"
 
-# - name: Generate Diffie-Hellman key
-#   # generated in easyrsa_pki_dir (how to change ??)
-#   command: "{{easyrsa_base_dir}}/easyrsa gen-dh"
-#   args:
-#     creates: "{{easyrsa_pki_dir}}/dh.pem"
+- name: Generate Diffie-Hellman key
+  # generated in easyrsa_pki_dir (how to change ??)
+  command: "{{easyrsa_base_dir}}/easyrsa gen-dh"
+  args:
+    creates: "{{easyrsa_pki_dir}}/dh.pem"
 
-- name: copy Diffie-Hellman key
-  copy:
-    src: dh.pem
-    dest: "{{easyrsa_pki_dir}}"
+# - name: copy Diffie-Hellman key
+#   copy:
+#     src: dh.pem
+#     dest: "{{easyrsa_pki_dir}}"

@@ -1,0 +1,8 @@
+---
+  - hosts: openvpn-server3
+    become: yes
+    vars_files:
+      - openvpn-vars.yml
+    roles:
+      - { role: openvpn-server, action: install-openvpn }
+      - { role: openvpn-server, action: init-pki}

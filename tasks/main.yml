@@ -1,13 +1,12 @@
 ---
-# tasks file for openvpn-server
 - name: install openvpn server
-  import_tasks: openvpn-server.yml
-  tags: ['never', 'install-openvpn']
+  include_tasks: openvpn-server.yml
+  when: action == 'install-openvpn'
 
 - name: install and init easy-rsa
-  import_tasks: easyrsa.yml
-  tags: ['never', 'init-pki']
+  include_tasks: easyrsa.yml
+  when: action == 'init-pki'
 
 - name: Generate certificates and OVPN config files
-  import_tasks: clients.yml
-  tags: ['never', 'manage-clients']
+  include_tasks: clients.yml
+  when: action == 'clients-management'
